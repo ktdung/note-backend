@@ -11,13 +11,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static('dist'));
 
-const generateId = () => {
-  const maxId =
-    notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
-
-  return maxId + 1;
-};
-
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');
 });
@@ -38,13 +31,14 @@ app.post('/api/notes', (req, res) => {
     });
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: Boolean(body.important) || false,
-    id: generateId(),
-  };
+  });
 
-  notes = notes.concat(note);
+  note.save().then((savedNote) => {
+    res.json(savedNote);
+  });
 
   res.json(note);
 });
