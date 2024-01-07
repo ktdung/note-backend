@@ -1,30 +1,15 @@
 // const http = require('http');
+// const mongoose = require('mongoose');
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const Note = require('./models/note');
+
 app.use(express.json());
 app.use(cors());
 app.use(express.static('dist'));
-
-let notes = [
-  {
-    id: 1,
-    content: 'HTML is easy',
-    important: true,
-  },
-  {
-    id: 2,
-    content: 'Browser can execute only JavaScript',
-    important: false,
-  },
-  {
-    id: 3,
-    content:
-      'GET and POST are the most important methods of HTTP protocol',
-    important: true,
-  },
-];
 
 const generateId = () => {
   const maxId =
@@ -33,10 +18,14 @@ const generateId = () => {
   return maxId + 1;
 };
 
+app.get('/', (req, res) => {
+  res.send('<h1>Hello World</h1>');
+});
+
 app.get('/api/notes', (req, res) => {
-  const note = req.body;
-  console.log(note);
-  res.json(notes);
+  Note.find({}).then((notes) => {
+    res.json(notes);
+  });
 });
 
 app.post('/api/notes', (req, res) => {
@@ -83,3 +72,22 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// let notes = [
+//   {
+//     id: 1,
+//     content: 'HTML is easy',
+//     important: true,
+//   },
+//   {
+//     id: 2,
+//     content: 'Browser can execute only JavaScript',
+//     important: false,
+//   },
+//   {
+//     id: 3,
+//     content:
+//       'GET and POST are the most important methods of HTTP protocol',
+//     important: true,
+//   },
+// ];
