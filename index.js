@@ -39,15 +39,14 @@ app.post('/api/notes', (req, res) => {
   note.save().then((savedNote) => {
     res.json(savedNote);
   });
-
-  res.json(note);
 });
 
-app.get('/api/notes/:id', (req, res) => {
+app.get('/api/notes/:id', async (req, res) => {
   const id = req.params.id;
 
-  const note = notes.find((note) => note.id === Number(id));
-
+  // const note = await Note.findById(id);
+  const note = await Note.findOne({ _id: id });
+  // console.log(note);
   if (note) {
     res.json(note);
   } else {
