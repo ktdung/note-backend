@@ -12,20 +12,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static('dist'));
 
-app.get('/data', [
-  function (req, res, next) {
-    fs.readFile('./mongo.jssd', 'utf-8', (err, data) => {
-      res.locals.data = data;
-      next(err);
-    });
-  },
-  function (req, res) {
-    res.locals.data = res.locals.data;
-    throw new Error('no data');
-    res.send(res.locals.data);
-  },
-]);
-
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');
 });
@@ -74,9 +60,13 @@ app.get('/api/notes/:id', (req, res, next) => {
 
 app.delete('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
-  notes = notes.find((note) => note.id !== id);
-
-  res.status(204).end();
+  Note.findOneAndDelete({
+    _id: id,
+  })
+    .then((note) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 const errorHandler = (error, req, res, next) => {
