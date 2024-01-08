@@ -1,5 +1,6 @@
 // const http = require('http');
 // const mongoose = require('mongoose');
+const fs = require('fs');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -10,6 +11,20 @@ const Note = require('./models/note');
 app.use(express.json());
 app.use(cors());
 app.use(express.static('dist'));
+
+app.get('/data', [
+  function (req, res, next) {
+    fs.readFile('./mongo.jssd', 'utf-8', (err, data) => {
+      res.locals.data = data;
+      next(err);
+    });
+  },
+  function (req, res) {
+    res.locals.data = res.locals.data;
+    throw new Error('no data');
+    res.send(res.locals.data);
+  },
+]);
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');
@@ -41,17 +56,20 @@ app.post('/api/notes', (req, res) => {
   });
 });
 
-app.get('/api/notes/:id', async (req, res) => {
+app.get('/api/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
-  // const note = await Note.findById(id);
-  const note = await Note.findOne({ _id: id });
-  // console.log(note);
-  if (note) {
-    res.json(note);
-  } else {
-    res.status(404).end();
-  }
+  // const note = await Note.findOne({ _id: id });
+  Note.findById(id)
+    .then((note) => {
+      console.log(note);
+      if (note) {
+        res.json(note);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete('/api/notes/:id', (req, res) => {
@@ -60,6 +78,22 @@ app.delete('/api/notes/:id', (req, res) => {
 
   res.status(204).end();
 });
+
+const errorHandler = (error, req, res, next) => {
+  console.log('hi3');
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' });
+  } else if (error.code === 'ENOENT') {
+    return res.status(400).send({ error: 'FILE NOT OPEN' });
+  } else if (error.message === 'no data') {
+    return res.status(400).send({ error: 'no data' });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
