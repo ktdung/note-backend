@@ -42,6 +42,21 @@ app.post('/api/notes', (req, res) => {
   });
 });
 
+app.put('/api/notes/:id', (req, res, next) => {
+  const body = req.body;
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+  console.log(note);
+
+  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+    .then((updatedNote) => {
+      res.json(updatedNote);
+    })
+    .catch((error) => next(error));
+});
+
 app.get('/api/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
@@ -58,12 +73,14 @@ app.get('/api/notes/:id', (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.delete('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-  Note.findOneAndDelete({
-    _id: id,
-  })
+app.delete('/api/notes/:id', (req, res, next) => {
+  console.log(req.params.id);
+  // Note.findOneAndDelete({
+  //   _id: req.params.id,
+  // })
+  Note.findByIdAndDelete(req.params.id)
     .then((note) => {
+      console.log(note);
       res.status(204).end();
     })
     .catch((error) => next(error));
