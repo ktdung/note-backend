@@ -16,7 +16,11 @@ mongoose
   });
 
 const noteScheme = new mongoose.Schema({
-  content: String,
+  content: {
+    type: String,
+    minLength: 5,
+    required: [true, 'content must more than 5 characters'],
+  },
   important: Boolean,
 });
 

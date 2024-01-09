@@ -1,5 +1,3 @@
-// const http = require('http');
-// const mongoose = require('mongoose');
 const fs = require('fs');
 require('dotenv').config();
 const express = require('express');
@@ -22,7 +20,7 @@ app.get('/api/notes', (req, res) => {
   });
 });
 
-app.post('/api/notes', (req, res) => {
+app.post('/api/notes', (req, res, next) => {
   const body = req.body;
   console.log(body);
 
@@ -37,21 +35,29 @@ app.post('/api/notes', (req, res) => {
     important: Boolean(body.important) || false,
   });
 
-  note.save().then((savedNote) => {
-    res.json(savedNote);
-  });
+  note
+    .save()
+    .then((savedNote) => {
+      res.json(savedNote);
+    })
+    .catch((error) => next(error));
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
   const body = req.body;
   const note = {
     content: body.content,
-    important: body.important,
+    important: body.important || false,
   };
-  console.log(note);
+  // console.log(note);
 
-  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+  Note.findByIdAndUpdate(req.params.id, note, {
+    new: true,
+    runValidators: true,
+    context: 'query',
+  })
     .then((updatedNote) => {
+      console.log(updatedNote);
       res.json(updatedNote);
     })
     .catch((error) => next(error));
@@ -96,7 +102,10 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).send({ error: 'FILE NOT OPEN' });
   } else if (error.message === 'no data') {
     return res.status(400).send({ error: 'no data' });
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).send({ error: error.message });
   }
+
   next(error);
 };
 
