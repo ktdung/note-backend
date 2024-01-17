@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
-if (process.argv.length < 3) {
-  console.log('give password as argument');
-  process.exit(1);
-}
+// if (process.argv.length < 3) {
+//   console.log('give password as argument');
+//   process.exit(1);
+// }
 
-const password = process.argv[2];
+// const password = process.argv[2];
 
-const url = `mongodb+srv://fullstack:${password}@cluster0.wwg7ir4.mongodb.net/noteApp?retryWrites=true&w=majority`;
+const url =
+  'mongodb+srv://fullstack:fullstackopen@cluster0.wwg7ir4.mongodb.net/testNoteApp?retryWrites=true&w=majority';
 
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
@@ -20,7 +21,7 @@ const noteSchema = new mongoose.Schema({
 const Note = mongoose.model('Note', noteSchema);
 
 // find
-Note.find({ important: true }).then((result) => {
+Note.find({}).then((result) => {
   result.forEach((note) => {
     console.log(note);
   });
@@ -42,12 +43,12 @@ Note.find({ important: true }).then((result) => {
 //   },
 
 // const note = new Note({
-//   content:
-//     'GET and POST are the most important methods of HTTP protocol',
-//   important: true,
+//   content: 'Browser can execute only JavaScript',
+//   important: false,
 // });
 
 // note.save().then((result) => {
 //   console.log('note saved!');
+//   console.log(result);
 //   mongoose.connection.close();
 // });
