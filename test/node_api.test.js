@@ -6,12 +6,38 @@ const helper = require('./test_helper');
 
 const api = supertest(app);
 
+// beforeEach(async () => {
+//   await Note.deleteMany({});
+
+//   let noteObject = new Note(helper.initialNotes[0]);
+//   await noteObject.save();
+
+//   noteObject = new Note(helper.initialNotes[1]);
+//   await noteObject.save();
+// });
+
+// beforeEach(async () => {
+//   await Note.deleteMany({});
+//   console.log('clearned mongodb');
+
+//   const noteObjects = helper.initialNotes.map(
+//     (note) => new Note(note)
+//   );
+
+//   const promiseArray = noteObjects.map((note) => note.save());
+//   const data = await Promise.all(promiseArray);
+//   console.log('done::', data);
+// });
+
 beforeEach(async () => {
   await Note.deleteMany({});
-  let noteObject = new Note(helper.initialNotes[0]);
-  await noteObject.save();
-  noteObject = new Note(helper.initialNotes[1]);
-  await noteObject.save();
+  let i = 0;
+  for (let note of helper.initialNotes) {
+    i++;
+    let noteObject = new Note(note);
+    let data = await noteObject.save();
+    console.log(`${i}: ${data}`);
+  }
 });
 
 test('notes are returned as json', async () => {
