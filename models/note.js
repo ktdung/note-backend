@@ -4,9 +4,13 @@ const noteScheme = new mongoose.Schema({
   content: {
     type: String,
     minLength: 5,
-    required: [true, 'content must more than 5 characters'],
+    required: true,
   },
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 noteScheme.set('toJSON', {
