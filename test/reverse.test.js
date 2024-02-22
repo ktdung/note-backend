@@ -1,19 +1,43 @@
+// const reverse = require('../utils/for_testing').reverse;
+
+// test('reserse of a', () => {
+//   const result = reverse('a');
+
+//   expect(result).toBe('a');
+// });
+
+// test('reverse of react', () => {
+//   const result = reverse('react');
+
+//   expect(result).toBe('tcaer');
+// });
+
+// test('reverse of releveler', () => {
+//   const result = reverse('releveler');
+
+//   expect(result).toBe('releveler');
+// });
+
+// node:test
+const { test } = require('node:test');
+const assert = require('node:assert');
+
 const reverse = require('../utils/for_testing').reverse;
 
-test('reserse of a', () => {
+test('reverse of a ', () => {
   const result = reverse('a');
 
-  expect(result).toBe('a');
+  assert.strictEqual(result, 'a');
 });
 
 test('reverse of react', () => {
   const result = reverse('react');
 
-  expect(result).toBe('tcaer');
+  assert.strictEqual(result, 'tcaer');
 });
 
-test('reverse of releveler', () => {
-  const result = reverse('releveler');
+test('reverse of saippuakauppias', () => {
+  const result = reverse('saippuakauppias');
 
-  expect(result).toBe('releveler');
+  assert.strictEqual(result, 'saippuakauppias');
 });
