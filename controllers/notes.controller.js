@@ -62,7 +62,7 @@ notesRouter.get('/:id', async (req, res) => {
   }
 });
 
-notesRouter.put('/:id', (req, res, next) => {
+notesRouter.put('/:id', async (req, res) => {
   const body = req.body;
 
   const note = {
@@ -70,16 +70,13 @@ notesRouter.put('/:id', (req, res, next) => {
     important: body.important || false,
   };
 
-  Note.findByIdAndUpdate(req.params.id, note, {
+  const updatedNote = Note.findByIdAndUpdate(req.params.id, note, {
     new: true,
     runValidators: true,
     context: 'query',
-  })
-    .then((updatedNote) => {
-      console.log(updatedNote);
-      res.json(updatedNote);
-    })
-    .catch((error) => next(error));
+  });
+
+  res.json(updatedNote);
 });
 
 notesRouter.delete('/:id', async (req, res) => {
