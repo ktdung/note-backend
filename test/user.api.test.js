@@ -44,11 +44,11 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username));
   });
 
-  test('create fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: 'dungkt',
+      username: 'root',
       name: 'Superuser',
       password: 'root',
     };
@@ -59,11 +59,11 @@ describe('when there is initially one user in db', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/);
 
-    expect(result.body.error).toContain(
-      'expected `username` to be unique'
+    const usersAtEnd = await helper.usersInDb();
+    assert(
+      result.body.error.includes('expected `username` to be unique')
     );
 
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toEqual(usersAtStart);
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
   });
 });

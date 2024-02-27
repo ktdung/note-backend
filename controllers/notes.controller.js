@@ -22,7 +22,7 @@ notesRouter.get('/', async (req, res) => {
 
 notesRouter.post('/', async (req, res) => {
   const body = req.body;
-  console.log(body);
+  // console.log(body);
 
   const decodedToken = jwt.verify(
     getTokenFrom(req),
@@ -33,6 +33,7 @@ notesRouter.post('/', async (req, res) => {
     return res.status(401).json({ error: 'token invalid' });
   }
   const user = await User.findById(decodedToken.id);
+  console.log(user);
 
   // if (!body.content) {
   //   return res.status(400).json({
@@ -43,7 +44,7 @@ notesRouter.post('/', async (req, res) => {
   const note = new Note({
     content: body.content,
     important: body.important === undefined ? false : body.important,
-    user: user._id,
+    user: user.id,
   });
 
   const savedNote = await note.save();
