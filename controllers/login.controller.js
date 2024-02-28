@@ -7,6 +7,7 @@ loginRouter.post('/', async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
+  console.log(user);
   const passwordCorrect =
     user === null
       ? false
@@ -24,7 +25,7 @@ loginRouter.post('/', async (req, res) => {
   };
 
   const token = jwt.sign(userForToken, process.env.SECRET, {
-    expiresIn: '60s',
+    expiresIn: 60 * 60,
   });
 
   res.status(200).send({

@@ -44,7 +44,7 @@ notesRouter.post('/', async (req, res) => {
   const note = new Note({
     content: body.content,
     important: body.important === undefined ? false : body.important,
-    user: user.id,
+    user: user._id,
   });
 
   const savedNote = await note.save();
@@ -71,11 +71,15 @@ notesRouter.put('/:id', async (req, res) => {
     important: body.important || false,
   };
 
-  const updatedNote = Note.findByIdAndUpdate(req.params.id, note, {
-    new: true,
-    runValidators: true,
-    context: 'query',
-  });
+  const updatedNote = await Note.findByIdAndUpdate(
+    req.params.id,
+    note,
+    {
+      new: true,
+      runValidators: true,
+      context: 'query',
+    }
+  );
 
   res.json(updatedNote);
 });
